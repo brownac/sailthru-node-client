@@ -2,16 +2,16 @@ import crypto from 'crypto'
 
 export const getSignatureHash = (params: object, secret: string) => md5(getSignatureString(params, secret));
 
-const getSignatureString = (params: object, secret: string): string => secret + extractParamValues(params).sort().join('');
+export const getSignatureString = (params: object, secret: string): string => secret + extractParamValues(params).sort().join('');
 
-const md5 = (data: string) => {
+export const md5 = (data: string) => {
     let md5: any;
     md5 = crypto.createHash('md5');
     md5.update(data, 'utf8');
     return md5.digest('hex');
 };
 
-const extractParamValues = (params: any) => {
+export const extractParamValues = (params: any) => {
     let k: string, temp: any, v: any, values: any;
     values = [];
     for (k in params) {
