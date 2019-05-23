@@ -1,4 +1,6 @@
 import crypto from 'crypto'
+import https from 'https';
+import { payloadInterface } from './interfaces';
 
 export const getSignatureHash = (params: object, secret: string) => md5(getSignatureString(params, secret));
 
@@ -30,4 +32,26 @@ export const extractParamValues = (params: any) => {
     return values;
 };
 
-export const getApiUrl = (): string => 'https://api.sailthru.com';
+export const getApiUrl = (): string => 'api.sailthru.com';
+
+export const makeApiCall = (endpoint: string, payload: payloadInterface, method: string): Promise<object> => {
+    const options = {
+        hostname: getApiUrl(),
+        path: `/${endpoint}?api_key=${payload.api_key}&sig=${payload.sig}&format=${payload.format}&json=${encodeURIComponent(payload.json)}`,
+        method,
+    };
+    return new Promise((resolve, reject) => {
+        let response: any = '';
+        const req = https.request(options, (resp) => {
+            resp.on('data', (chunk) => {
+                response += chunk;
+            });
+            resp.on('end', () => {
+                return resolve(JSON.parse(response));
+            });
+        }).on('error', (e) => {
+            reject('Error during request: ' + e);
+        });
+        req.end();
+    });    
+};

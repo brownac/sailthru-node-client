@@ -1,6 +1,6 @@
 import { getSignatureHash } from './util';
 import { payloadInterface } from './interfaces';
-import getCall from './helpers/apiGet';
+import { getCall, postCall } from './helpers/api';
 
 class SailthruClient {
     key: string;
@@ -30,6 +30,11 @@ class SailthruClient {
     async apiGet(endpoint: string, data: object) {
         const payload: payloadInterface = this._preparePayload(data);
         return getCall(endpoint, payload);
+    }
+
+    async apiPost(endpoint: string, data: object) {
+        const payload: payloadInterface = this._preparePayload(data);
+        return postCall(endpoint, payload);
     }
 }
 

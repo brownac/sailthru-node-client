@@ -1,16 +1,22 @@
-import crypto from 'crypto';
 import {
     getSignatureHash,
     getSignatureString,
     md5,
     getApiUrl,
     extractParamValues,
+    makeApiCall,
 } from './util';
 
 jest.mock('crypto', () => ({
     createHash: jest.fn(() => ({
         update: jest.fn(),
         digest: jest.fn(() => 'digest'),
+    })),
+}));
+
+jest.mock('https', () => ({
+    request: jest.fn(() => ({
+        on: jest.fn(event => console.log(event)),
     })),
 }));
 
@@ -41,6 +47,10 @@ describe('util', () => {
        expect(values).toEqual(['123key', 'json', JSON.stringify({ key: 'value' })]);
     });
     test('getApiUrl', () => {
-        expect(getApiUrl()).toEqual('https://api.sailthru.com');
+        expect(getApiUrl()).toEqual('api.sailthru.com');
+    });
+    test('makeApiCall', async () => {
+        const res = await makeApiCall('test', {}, 'GET');
+        console.log(res);
     });
 });
